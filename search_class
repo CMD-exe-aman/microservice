@@ -1,1 +1,54 @@
+import java.io.*;
 
+public class Search implements Serializable {
+    private static final long serialVersionUID = 1L; // Recommended serialVersionUID
+
+    private String city;
+
+    // Constructor
+    public Search(String city) {
+        this.city = city;
+    }
+
+    // Getter for city
+    public String getCity() {
+        return city;
+    }
+
+    // Method to serialize the Search object
+    public void serialize(String filePath) throws IOException {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
+            oos.writeObject(this);
+        }
+    }
+
+    // Method to deserialize a Search object
+    public static Search deserialize(String filePath) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
+            return (Search) ois.readObject();
+        }
+    }
+
+    public static void main(String[] args) {
+        String filePath = "search.ser";
+
+        // Create a Search instance
+        Search search = new Search("New York");
+
+        // Serialize the object
+        try {
+            search.serialize(filePath);
+            System.out.println("Serialized Search object: " + search.getCity());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Deserialize the object
+        try {
+            Search deserializedSearch = Search.deserialize(filePath);
+            System.out.println("Deserialized Search object: " + deserializedSearch.getCity());
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+}
