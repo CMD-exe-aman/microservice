@@ -1,1 +1,68 @@
+import java.io.*;
 
+public class SearchResult implements Serializable {
+    private static final long serialVersionUID = 1L; // Recommended serialVersionUID
+
+    private String city;
+    private String kind;
+    private String title;
+
+    // Constructor
+    public SearchResult(String city, String kind, String title) {
+        this.city = city;
+        this.kind = kind;
+        this.title = title;
+    }
+
+    // Getters for the fields
+    public String getCity() {
+        return city;
+    }
+
+    public String getKind() {
+        return kind;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    // Method to serialize the SearchResult object
+    public void serialize(String filePath) throws IOException {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
+            oos.writeObject(this);
+        }
+    }
+
+    // Method to deserialize a SearchResult object
+    public static SearchResult deserialize(String filePath) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
+            return (SearchResult) ois.readObject();
+        }
+    }
+
+    public static void main(String[] args) {
+        String filePath = "searchResult.ser";
+
+        // Create a SearchResult instance
+        SearchResult searchResult = new SearchResult("New York", "Restaurant", "Best Pizza Place");
+
+        // Serialize the object
+        try {
+            searchResult.serialize(filePath);
+            System.out.println("Serialized SearchResult object: " + searchResult.getTitle());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Deserialize the object
+        try {
+            SearchResult deserializedSearchResult = SearchResult.deserialize(filePath);
+            System.out.println("Deserialized SearchResult object: " + deserializedSearchResult.getTitle());
+            System.out.println("City: " + deserializedSearchResult.getCity());
+            System.out.println("Kind: " + deserializedSearchResult.getKind());
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+}
